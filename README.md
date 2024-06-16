@@ -1,6 +1,6 @@
 # WEBLLM-LOCAL-AI
 
-Este es un proyecto hecho en JavaScript Vanilla que hace uso de una biblioetca de inteligencia artificial
+Este es un proyecto realizado en Vanilla JavaScript que hace uso de una biblioteca de inteligencia artificial.
 en el navegador [WebLLM](https://github.com/mlc-ai/web-llm).
 
 ## Caracteristicas WebLLM
@@ -10,4 +10,4 @@ en el navegador [WebLLM](https://github.com/mlc-ai/web-llm).
 * Soporte a WebWorker y serviceWorker.
 
 
-Run `adad` 
+`-----` 
