@@ -52,7 +52,7 @@ ul {
   p {
     padding: 4px 8px;
     border-radius: 4px;
-    margin-top:5px;
+    margin-top: 5px;
   }
 
   &.user {
@@ -88,20 +88,31 @@ form {
 
 button {
   background: #09f;
-  border:0;
-  color:white;
+  border: 0;
+  color: white;
   border-radius: 6px;
   cursor: pointer;
   padding: 8px;
   transition: background 0.3s ease;
 
-  &[disabled]{
+  &[disabled] {
     background: #ccc;
-    opacity: .6;
+    opacity: 0.6;
     pointer-events: none;
   }
 
-  &:hover{
-    background: rgb(0, 104, 173)
+  &:hover {
+    background: rgb(0, 104, 173);
   }
+}
+
+small {
+  font-size: 10px;
+  color: grey;
+  position: fixed;
+  bottom: 10px;
+  left: 0px;
+  right: 0px;
+  margin: auto;
+  width: 400px;
 }
