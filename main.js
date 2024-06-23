@@ -11,60 +11,62 @@ const $info = $("small");
 
 const SELECTED_MODEL = "gemma-2b-it-q4f32_1-MLC";
 
-
 let messages = [];
 
-
-
-
 //async function createEngine() {
-  console.time("engine");
-  const engine = await CreateMLCEngine(SELECTED_MODEL,{ 
-    initProgressCallback: (info) => {
-      //console.log(info);
-      $info.textContent = `${info.text}%`
-      if(info.progress === 1) $button.removeAttribute('disabled'); 
-    }
-  });
-  console.timeEnd("engine");
-  console.log("Modelo cargado");
+console.time("engine");
+const engine = await CreateMLCEngine(SELECTED_MODEL, {
+  initProgressCallback: (info) => {
+    //console.log(info);
+    $info.textContent = `${info.text}%`;
+    if (info.progress === 1) $button.removeAttribute("disabled");
+  },
+});
+console.timeEnd("engine");
+console.log("Modelo cargado");
 
 //}
 
-
-
 //createEngine();
-
 
 $form.addEventListener("submit", async (event) => {
   event.preventDefault();
   const messageText = $input.value.trim();
-  
-  if(messageText !== '') $input.value = '';
+
+  if (messageText !== "") $input.value = "";
 
   addMessage(messageText, "user");
-  $button.setAttribute("disabled",true);
+  $button.setAttribute("disabled", true);
 
-  const userMessage = { role:'user', content: messageText };
+  const userMessage = { role: "user", content: messageText };
   messages.push(userMessage);
 
-  const reply = await engine.chat.completions.create({
+  const chunks = await engine.chat.completions.create({
     messages: messages,
-    //stream: true
-  })
+    stream: true,
+  });
 
-  // let reply = "";
+  let reply = "";
 
-  // for await (const chunk of chunks) { 
-  //   console.log(chunk.choices);
-  // }
+  const $botMessage = addMessage("", "bot");
 
+  for await (const chunk of chunks) {
+    console.log(chunk.choices);
+    const [choices] = chunk.choices;
+    const content = choices?.delta?.content ?? "";
+    console.log(reply);
 
-  const botMessage = reply.choices[0].message.content;
-  messages.push(botMessage)
-  addMessage(botMessage,'bot');
+    reply += content;
+
+    $botMessage.textContent = reply;
+  }
+
+  messages.push({
+    role: "assistant",
+    content: reply,
+  });
+
   $button.removeAttribute("disabled");
-
 });
 
 function addMessage(text, sender) {
@@ -79,4 +81,6 @@ function addMessage(text, sender) {
 
   $messages.appendChild($newMessage);
   $container.scrollTop = $container.scrollHeight;
+
+  return $text;
 }
