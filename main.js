@@ -1,4 +1,4 @@
-import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
+import { CreateWebWorkerMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
 
 const $ = (element) => document.querySelector(element);
 const $form = $("form");
@@ -10,12 +10,25 @@ const $button = $("button");
 const $info = $("small");
 
 const SELECTED_MODEL = "gemma-2b-it-q4f32_1-MLC";
+// const SELECTED_MODEL = "Llama-3-8B-Instruct-q4f32_1-MLC-1k";
+
 
 let messages = [];
 
+// if(window.Worker){
+//   const worker = new Worker('/worker.js');
+//   worker.postMessage({name:'Hello Worker!'});
+//   worker.onmessage = (e)=>{
+//     console.log('Main Thread: Message received from main thread');
+//     console.log(e)
+//   }
+// }
+
 //async function createEngine() {
 console.time("engine");
-const engine = await CreateMLCEngine(SELECTED_MODEL, {
+const engine = await CreateWebWorkerMLCEngine(
+  new Worker('/worker.js', {type:'module'}),
+  SELECTED_MODEL, {
   initProgressCallback: (info) => {
     //console.log(info);
     $info.textContent = `${info.text}%`;
@@ -51,13 +64,11 @@ $form.addEventListener("submit", async (event) => {
   const $botMessage = addMessage("", "bot");
 
   for await (const chunk of chunks) {
-    console.log(chunk.choices);
+    //console.log(chunk.choices);
     const [choices] = chunk.choices;
     const content = choices?.delta?.content ?? "";
-    console.log(reply);
-
+    //console.log(reply);
     reply += content;
-
     $botMessage.textContent = reply;
   }
 
@@ -67,6 +78,8 @@ $form.addEventListener("submit", async (event) => {
   });
 
   $button.removeAttribute("disabled");
+  $container.scrollTop = $container.scrollHeight;
+
 });
 
 function addMessage(text, sender) {
